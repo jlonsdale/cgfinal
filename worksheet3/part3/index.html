@@ -66,17 +66,26 @@
         gl_FragColor = u_Color;
       }
     </script>
-
     <script type="text/javascript" src="script.js"></script>
     <script type="text/javascript" src="constants.js"></script>
+    <style>
+      .container {
+        display: flex;
+        margin: auto;
+      }
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        padding-top: 20px;
+      }
+    </style>
   </head>
 
   <body style="font-family: 'Arial', sans-serif">
-    <h1>3 Point Perspective</h1>
-    <div style="text-align: center; margin: auto">
-      <div class="container">
-        <canvas id="c" height="712" width="712"> ruh roh </canvas>
-      </div>
+    <div class="container">
+      <canvas id="c" height="512" width="512"> ruh roh </canvas>
     </div>
   </body>
 </html>

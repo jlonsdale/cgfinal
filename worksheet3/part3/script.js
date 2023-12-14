@@ -34,8 +34,9 @@ const main = async () => {
 
   const at = vec3(0.0, 0.0, 0.0);
   const up = vec3(0.0, 1.0, 0.0);
-  let theta = -0.785398; //45 in rads
-  let phi = -0.436332;
+
+  theta = -0.785398; //45 in rads
+  phi = -0.785398;
   let far = 10;
   let eye = vec3(
     far * Math.sin(theta) * Math.cos(phi),

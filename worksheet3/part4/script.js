@@ -33,24 +33,67 @@ const main = async () => {
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   let far = 10;
-  const at = vec3(0.5, 0.5, 0.0);
-  const up = vec3(0.0, 1.0, 0.0);
-
-  const eye = vec3(0.5, 0.5, far);
+  let at = vec3(0.5, 0.5, 0.0);
+  let up = vec3(0.0, 1.0, 0.0);
+  let eye = vec3(0.5, 0.5, far);
 
   let V = lookAt(eye, at, up);
   let P = perspective(45, 1, 0, far);
 
-  const uModelViewMatrix_onePoint = gl.getUniformLocation(
-    program,
-    "u_ModelViewMatrix"
+  console.log(V);
+
+  let translateMatrix = translate(-0.5, 0.5, 0);
+
+  let uModelViewMatrix = gl.getUniformLocation(program, "u_ModelViewMatrix");
+  let uProjectionMatrix = gl.getUniformLocation(program, "u_ProjectionMatrix");
+  let uTranslateMatrix = gl.getUniformLocation(program, "u_TranslateMatrix");
+
+  gl.uniformMatrix4fv(uModelViewMatrix, false, flatten(V));
+  gl.uniformMatrix4fv(uProjectionMatrix, false, flatten(P));
+  gl.uniformMatrix4fv(uTranslateMatrix, false, flatten(translateMatrix));
+
+  gl.drawElements(gl.LINES, wire_indices.length, gl.UNSIGNED_INT, 0);
+
+  eye = vec3(0.0, 0.0, 1.0);
+
+  let theta = -0.785398; //45 in rads
+  let phi = 0;
+
+  eye = vec3(
+    far * Math.sin(theta) * Math.cos(phi),
+    far * Math.sin(theta) * Math.sin(phi),
+    far * Math.cos(theta)
   );
-  gl.uniformMatrix4fv(uModelViewMatrix_onePoint, false, flatten(V));
-  const uProjectionMatrix_onePoint = gl.getUniformLocation(
-    program,
-    "u_ProjectionMatrix"
+
+  V = lookAt(eye, at, up);
+
+  console.log(V);
+
+  translateMatrix = translate(0, 0, 0);
+
+  gl.uniformMatrix4fv(uModelViewMatrix, false, flatten(V));
+  gl.uniformMatrix4fv(uTranslateMatrix, false, flatten(translateMatrix));
+
+  gl.drawElements(gl.LINES, wire_indices.length, gl.UNSIGNED_INT, 0);
+
+  theta = -0.785398; //45 in rads
+  phi = -0.785398;
+
+  eye = vec3(
+    far * Math.sin(theta) * Math.cos(phi),
+    far * Math.sin(theta) * Math.sin(phi),
+    far * Math.cos(theta)
   );
-  gl.uniformMatrix4fv(uProjectionMatrix_onePoint, false, flatten(P));
+
+  V = lookAt(eye, at, up);
+
+  console.log(V);
+
+  translateMatrix = translate(0.5, -0.5, 0);
+
+  gl.uniformMatrix4fv(uModelViewMatrix, false, flatten(V));
+  gl.uniformMatrix4fv(uTranslateMatrix, false, flatten(translateMatrix));
+
   gl.drawElements(gl.LINES, wire_indices.length, gl.UNSIGNED_INT, 0);
 };
 
