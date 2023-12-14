@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="../../common/webgl-utils.js"></script>
+    <script type="text/javascript" src="../../common/initShaders.js"></script>
+    <script type="text/javascript" src="../../common/MV.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+
+    <script id="vertex-shader" type="x-shader/x-vertex">
+      attribute vec4 a_position;
+      uniform mat4 u_modelViewMatrix;
+      uniform mat4 u_projectionMatrix;
+
+      varying float u, v;
+      varying float diffuse;
+      varying vec3 v_normal;
+
+      void
+
+      main()
+      {
+
+  
+        v_normal = normalize(a_position.xyz);
+        
+        u = 1.0 - atan(a_position.z, a_position.x) / (2.0 * 3.14159265359);
+        v = acos(a_position.y) / 3.14159265359;
+
+        gl_Position = u_projectionMatrix*u_modelViewMatrix*a_position;    
+      
+      }
+      </script>
+
+      <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+        varying float u, v;
+        varying float diffuse;
+        varying vec3 v_normal;
+
+        uniform samplerCube texture;
+        
+        void
+        main()
+        {
+          gl_FragColor = textureCube(texture, normalize(v_normal));
+        }
+        </script>
+    <style>
+    .container {
+      display: flex;
+      margin: auto;
+    }
+    .textbox {
+      background-color: #ffd6e8; /* Light pink background */
+      border: 2px solid pink;
+      padding: 10px;
+      margin-left: 20px;
+      width: 450px;
+    }
+    h2 {
+      padding: 2px;
+      margin: 0px;
+      font-size: 24px;
+      color: #ff007f; /* Pink text color */
+    }
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      padding-top: 20px;
+    }
+
+    label {
+      font-weight: bold;
+      color: #333;
+    }
+
+    select {
+      width: 100%;
+      padding: 5px;
+      margin: 5px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #ff6b6b;
+    }
+
+  ul {
+    padding-left: 20px; /* Adjust the value to your desired spacing */
+  }
+
+  li {
+    margin-bottom: 10px; /* Adjust the value to your desired spacing */
+    list-style-type: disc;
+  }
+      
+    </style>
+  </head>
+
+  <body style="font-family: 'Arial', sans-serif">
+    <div class="container">
+      <canvas id="c" height="512" width="512"> ruh roh </canvas>
+      <div class="textbox">
+        <h2>Part 1 - Loading a cube map</h2>
+        <p>
+          • Start with a textured sphere from Part 3 of Worksheet 6, but instead of a 2D texture, use a cube map to texture the sphere.  
+          <br/><br/>
+          • Modify the texture initialization to load a cube map from six image files.
+          <br/><br/>
+          • Use a loop to load image files and retrieve the image from the event variable in the onload function.
+          <br/><br/>
+          • Use the world space normal as texture coordinates in the fragment shader.
+        </p>
+        
+      </div>
+      <img id="texImage" src="../earth.jpg" hidden="">
+  </body>
+</html>

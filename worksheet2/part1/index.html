@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+
+    <script type="text/javascript" src="../../common/MV.js"></script>
+    <script type="text/javascript" src="../../common/webgl-utils.js"></script>
+    <script type="text/javascript" src="../../common/initShaders.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+
+    <script id="vertex-shader" type="x-shader/x-vertex">
+      attribute vec4 a_Position;
+      attribute vec4 a_Color;
+
+      varying vec4 v_Color;
+      void main() {
+        v_Color = a_Color;
+        gl_Position = a_Position;
+      }
+    </script>
+
+    <script id="fragment-shader" type="x-shader/x-fragment">
+      precision mediump float;
+      varying vec4 v_Color;
+
+      void main() {
+        gl_FragColor = v_Color;
+      }
+    </script>
+    <style>
+      .container {
+        display: flex;
+        margin: auto;
+      }
+      .textbox {
+        background-color: #ffd6e8; /* Light pink background */
+        border: 2px solid pink;
+        padding: 10px;
+        margin-left: 20px;
+        width: 450px;
+      }
+      h2 {
+        font-size: 24px;
+        color: #ff007f; /* Pink text color */
+      }
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        padding-top: 20px;
+      }
+    </style>
+  </head>
+
+  <body style="font-family: 'Arial', sans-serif">
+    <div class="container">
+      <canvas id="c" height="512" width="512"> ruh roh </canvas>
+      <div class="textbox">
+        <h2>Part 5 - Rotating Square</h2>
+        <p>
+          • Add a second triangle to the previous part such that you have a
+          quadrilateral (which is maybe even a square). <br />
+          • Center your quad (short form of quadrilateral) and rotate it such
+          that it has its vertices on the coordinate axes. <br />
+          • Add a rotation so the quad rotates around its center. Animate the
+          rotation angle over time. Use requestAnimationFrame to continuously
+          call your render function.
+        </p>
+      </div>
+    </div>
+    </div>
+  </body>
+</html>

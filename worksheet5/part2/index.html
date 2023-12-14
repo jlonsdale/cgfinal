@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="../../common/webgl-utils.js"></script>
+    <script type="text/javascript" src="../../common/initShaders.js"></script>
+    <script type="text/javascript" src="../../common/MV.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+    <script type="text/javascript" src="../utils.js"></script>
+
+    <script id="vertex-shader" type="x-shader/x-vertex">
+      attribute vec4 a_position;
+      attribute vec4 a_normal;
+    
+      uniform mat4 u_modelViewMatrix;
+      uniform mat4 u_projectionMatrix;
+
+      uniform vec4 ambientProduct, diffuseProduct, specularProduct;
+      uniform vec4 lightPosition;
+
+      uniform float s;
+      uniform float light;
+
+
+      varying vec4 v_color;
+
+      void main() {
+
+        float shininess = 25.0;
+
+        vec3 L = -normalize(lightPosition.xyz);
+
+        vec3 pos = (u_modelViewMatrix * a_position).xyz;
+        vec3 N = normalize(a_normal.xyz);
+
+        vec3 E = -normalize(pos);
+        vec3 H = normalize(E+L);
+
+        vec4 ambient = ambientProduct;
+
+        float Kd = max( dot(L, N), 0.0 );
+        vec4  diffuse = Kd*diffuseProduct;
+    
+        float Ks = pow( max(dot(N, H), 0.0), shininess );
+        vec4  specular = Ks * specularProduct;
+        
+        if( dot(L, N) < 0.0 ) {
+          specular = vec4(0.0, 0.0, 0.0, 1.0);
+        } 
+
+        v_color = ambient + diffuse +specular;
+        v_color.a = 1.0;
+
+        gl_Position = u_projectionMatrix * u_modelViewMatrix * a_position;
+
+      }
+    </script>
+
+    <script id="fragment-shader" type="x-shader/x-fragment">
+      precision mediump float;
+    
+      varying vec4 v_color;
+    
+      void main()
+      {
+        gl_FragColor = v_color;
+      }
+    </script>
+    
+    <style>
+    .container {
+      display: flex;
+      margin: auto;
+    }
+    .textbox {
+      background-color: #ffd6e8; /* Light pink background */
+      border: 2px solid pink;
+      padding: 10px;
+      margin-left: 20px;
+      width: 450px;
+    }
+    h2 {
+      padding: 2px;
+      margin: 0px;
+      font-size: 24px;
+      color: #ff007f; /* Pink text color */
+    }
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      padding-top: 20px;
+    }
+
+    label {
+      font-weight: bold;
+      color: #333;
+    }
+
+    select {
+      width: 100%;
+      padding: 5px;
+      margin: 5px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #ff6b6b;
+    }
+
+  ul {
+    padding-left: 20px; /* Adjust the value to your desired spacing */
+  }
+
+  li {
+    margin-bottom: 10px; /* Adjust the value to your desired spacing */
+    list-style-type: disc;
+  }
+      
+    </style>
+  </head>
+
+  <body style="font-family: 'Arial', sans-serif">
+    <div class="container">
+      <canvas id="c" height="512" width="512"> ruh roh </canvas>
+      <div class="textbox">
+        <h2>Part 2</h2>
+        <p>
+          • Added Phong shading to the cat model. 
+          <br/><br/>
+          • I tried to create the look of overhead warm lighting.
+        </p>
+  </body>
+</html>

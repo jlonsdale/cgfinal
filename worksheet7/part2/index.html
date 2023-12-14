@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="../../common/webgl-utils.js"></script>
+    <script type="text/javascript" src="../../common/initShaders.js"></script>
+    <script type="text/javascript" src="../../common/MV.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+    <script type="text/javascript" src="utils.js"></script>
+
+    <script id="vertex-shader" type="x-shader/x-vertex">
+      attribute vec4 a_position;
+      uniform mat4 u_modelViewMatrix;
+      uniform mat4 u_projectionMatrix;
+      uniform mat4 u_mtex;
+
+      varying float u, v;
+      varying float diffuse;
+      varying vec3 v_normal;
+
+      void
+
+      main()
+      {
+  
+        v_normal = (u_mtex * a_position).xyz;
+        
+        u = 1.0 - atan(a_position.z, a_position.x) / (2.0 * 3.14159265359);
+        v = acos(a_position.y) / 3.14159265359;
+
+        gl_Position = u_projectionMatrix*u_modelViewMatrix*a_position;    
+      
+      }
+      </script>
+
+      <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+        varying float u, v;
+        varying float diffuse;
+        varying vec3 v_normal;
+
+        uniform samplerCube texture;
+        
+        void
+        main()
+        {
+          gl_FragColor = textureCube(texture, v_normal);
+        }
+        </script>
+    <style>
+    .container {
+      display: flex;
+      margin: auto;
+    }
+    .textbox {
+      background-color: #ffd6e8; /* Light pink background */
+      border: 2px solid pink;
+      padding: 10px;
+      margin-left: 20px;
+      width: 450px;
+    }
+    h2 {
+      padding: 2px;
+      margin: 0px;
+      font-size: 24px;
+      color: #ff007f; /* Pink text color */
+    }
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      padding-top: 20px;
+    }
+
+    label {
+      font-weight: bold;
+      color: #333;
+    }
+
+    select {
+      width: 100%;
+      padding: 5px;
+      margin: 5px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #ff6b6b;
+    }
+
+  ul {
+    padding-left: 20px; /* Adjust the value to your desired spacing */
+  }
+
+  li {
+    margin-bottom: 10px; /* Adjust the value to your desired spacing */
+    list-style-type: disc;
+  }
+      
+    </style>
+  </head>
+
+  <body style="font-family: 'Arial', sans-serif">
+    <div class="container">
+      <canvas id="c" height="512" width="512"> ruh roh </canvas>
+      <div class="textbox">
+        <h2>Part 2</h2>
+        <p>
+          • Use clip coordinates for the quad, where one corner is (-1, -1, 0.999, 1), and the opposite corner is (1, 1, 0.999, 1).
+          Draw the quad with the same shaders as before.
+          Introduce a uniform matrix (Mtex) in the vertex shader to transform vertex positions to texture coordinates.
+          <br/>
+          <br/>
+          • For the sphere, Set Mtex as an identity matrix.
+          <br/>
+          <br/>
+          For the quad, create Mtex for the quad using: The inverse of the projection matrix to go from clip coordinates to camera coordinates, and the inverse of the rotational part of the view matrix (no translation) to obtain direction vectors in world coordinates.
+        </p>
+      </div>
+  </body>
+</html>

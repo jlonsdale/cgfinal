@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="../../common/webgl-utils.js"></script>
+    <script type="text/javascript" src="../../common/initShaders.js"></script>
+    <script type="text/javascript" src="../../common/MV.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+    <script type="text/javascript" src="utils.js"></script>
+
+
+
+    <script id="vertex-shader" type="x-shader/x-vertex">
+      attribute vec4 a_position;
+      attribute vec4 a_normal;
+
+      uniform mat4 u_modelViewMatrix;
+      uniform mat4 u_projectionMatrix;
+      uniform mat4 u_mtex;
+      uniform mat3 u_normalMatrix;
+      uniform bool u_isReflective;
+      uniform vec3 u_eyePos;
+
+      varying vec3 v_texturecords;
+
+
+      varying vec3 normal, position;
+      varying float u, v;
+
+
+      void
+
+      main()
+      {
+        position = (u_modelViewMatrix * a_position).xyz;
+        normal = normalize(u_normalMatrix*a_normal.xyz);
+
+        u = 1.0 - atan(a_position.z, a_position.x) / (2.0 * 3.14159265359);
+        v = acos(a_position.y) / 3.14159265359;
+
+        v_texturecords = (u_mtex * a_position).xyz;
+        gl_Position = u_projectionMatrix*u_modelViewMatrix*a_position;   
+      
+      }
+      </script>
+
+      <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+        varying vec3 v_texturecords;
+        varying float u, v;
+
+        uniform bool u_isReflective;
+        varying vec3 normal;
+        varying vec3 position;
+        uniform vec3 u_eyePos;
+
+        uniform samplerCube texture;
+        uniform sampler2D normalMap;
+
+        vec3 rotate_to_normal(vec3 n, vec3 v) {
+          float sgn_nz = sign(n.z + 1.0e-16);
+          float a = -1.0/(1.0 + abs(n.z));
+          float b = n.x*n.y*a;
+          return vec3(1.0 + n.x*n.x*a, b, -sgn_nz*n.x)*v.x
+          + vec3(sgn_nz*b, sgn_nz*(1.0 + n.y*n.y*a), -n.y)*v.y
+          + n*v.z;
+         }
+
+        void
+        main()
+        {
+          if(u_isReflective) {
+            vec3 lookedUpNormal = texture2D(normalMap, vec2(u,v)).xyz;
+            vec3 newNormal = textureCube(texture, rotate_to_normal(normal, lookedUpNormal)).xyz;
+            vec3 reflected = reflect(u_eyePos-position, newNormal);
+            gl_FragColor = textureCube(texture, reflected);
+
+          }
+          else {
+            gl_FragColor = textureCube(texture, v_texturecords);
+          }
+        }
+        </script>
+    <style>
+    .container {
+      display: flex;
+      margin: auto;
+    }
+    .textbox {
+      background-color: #ffd6e8; /* Light pink background */
+      border: 2px solid pink;
+      padding: 10px;
+      margin-left: 20px;
+      width: 450px;
+    }
+    h2 {
+      padding: 2px;
+      margin: 0px;
+      font-size: 24px;
+      color: #ff007f; /* Pink text color */
+    }
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      padding-top: 20px;
+    }
+
+    label {
+      font-weight: bold;
+      color: #333;
+    }
+
+    select {
+      width: 100%;
+      padding: 5px;
+      margin: 5px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #ff6b6b;
+    }
+
+  ul {
+    padding-left: 20px; /* Adjust the value to your desired spacing */
+  }
+
+  li {
+    margin-bottom: 10px; /* Adjust the value to your desired spacing */
+    list-style-type: disc;
+  }
+      
+    </style>
+  </head>
+
+  <body style="font-family: 'Arial', sans-serif">
+    <div class="container">
+      <canvas id="c" height="512" width="512"> ruh roh </canvas>
+      <div class="textbox">
+        <h2>Part 4</h2>
+        <p>
+          • Load the normal map texture from the file textures/normalmap.png. 
+          Map it onto the sphere using the same technique as in Part 3 of 
+          Worksheet 6. The first image for this part is the expected result.
+          <br/>
+          <br/>
+
+          • Bind the normal map to another texture (e.g. TEXTURE1) so that it can 
+          be used together with the cube map [Angel 7.5.6]. The color found in 
+          the normal map is in [0, 1]. Transform it to be in [−1, 1] to get the 
+          actual normal.
+          <br/>
+          <br/>
+
+          • The normal retrieved from the normal map is in tangent space. We need 
+          to transform it to world space to use it in place of the sphere normal 
+          when calculating the direction of reflection. Use the following function 
+          as an efficient way to perform this change of basis transformation
+        </p>
+      </div>
+  </body>
+</html>
