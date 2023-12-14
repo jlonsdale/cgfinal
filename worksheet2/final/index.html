@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="../../common/webgl-utils.js"></script>
+    <script type="text/javascript" src="../../common/initShaders.js"></script>
+    <script type="text/javascript" src="../../common/MV.js"></script>
+
+    <script id="vertex-shader" type="x-shader/x-vertex">
+      attribute vec4 a_Position;
+      attribute vec4 a_Color;
+      varying vec4 v_Color;
+      void main() {
+        v_Color = a_Color;
+        gl_Position = a_Position;
+        gl_PointSize = 5.0;
+      }
+    </script>
+
+    <script id="fragment-shader" type="x-shader/x-fragment">
+      precision mediump float;
+      varying vec4 v_Color;
+      void main() {
+        gl_FragColor = v_Color;
+      }
+    </script>
+
+    <script type="text/javascript" src="script.js"></script>
+    <script type="text/javascript" src="utils.js"></script>
+
+    <meta charset="UTF-8" />
+  </head>
+
+  <body
+    style="font-family: Arial, sans-serif; text-align: center; padding: 20px"
+  >
+    <canvas
+      id="c"
+      height="512"
+      width="512"
+      style="border: 1px solid #333"
+    ></canvas>
+    <div>
+      <button
+        id="delete"
+        type="button"
+        style="
+          background-color: #333;
+          color: white;
+          border: none;
+          padding: 10px 20px;
+          margin-top: 10px;
+          cursor: pointer;
+        "
+      >
+        Clear!
+      </button>
+
+      <select id="colorDropdown" style="margin-top: 10px; padding: 5px">
+        <option value="red" style="color: red">Red</option>
+        <option value="green" style="color: green">Green</option>
+        <option value="blue" style="color: blue">Blue</option>
+        <option value="yellow" style="color: yellow">Yellow</option>
+        <option value="orange" style="color: orange">Orange</option>
+        <option value="purple" style="color: purple">Purple</option>
+        <option value="pink" style="color: pink">Pink</option>
+        <option value="brown" style="color: brown">Brown</option>
+        <option value="gray" style="color: gray">Gray</option>
+        <option value="black" style="color: black">Black</option>
+      </select>
+
+      <select id="drawmodeDropdown" style="margin-top: 10px; padding: 5px">
+        <option value="dot" style="color: black">Dot</option>
+        <option value="triangle" style="color: black">Triangle</option>
+        <option value="circle" style="color: black">Circle</option>
+      </select>
+      <label for="sizeslider" style="color: #333">Dot Size:</label>
+      <input
+        type="range"
+        id="sizeslider"
+        name="sizeslider"
+        min="0.1"
+        max="1"
+        step="0.1"
+        value="0.1"
+        style="margin-top: 10px"
+      />
+    </div>
+  </body>
+</html>

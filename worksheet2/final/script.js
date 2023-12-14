@@ -10,7 +10,6 @@ const colorMap = {
   brown: [0.647, 0.165, 0.165],
   gray: [0.502, 0.502, 0.502],
   black: [0.0, 0.0, 0.0],
-  white: [1.0, 1.0, 1.0],
 };
 const drawModeMap = {
   dot: "POINTS",
@@ -249,6 +248,8 @@ const onClick = (e, gl, canvas, bufferslist, vColor, vPosition) => {
 
   gl.clear(gl.COLOR_BUFFER_BIT);
 
+  drawTriangle(triangles, tBuffer, gl, vPosition, vtBuffer, vColor, tcolors);
+  drawTriangle(vertices, vBuffer, gl, vPosition, vcBuffer, vColor, vcolors);
   drawCircle(
     circles,
     circBuffer,
@@ -258,8 +259,6 @@ const onClick = (e, gl, canvas, bufferslist, vColor, vPosition) => {
     vColor,
     ccolors
   );
-  drawTriangle(triangles, tBuffer, gl, vPosition, vtBuffer, vColor, tcolors);
-  drawTriangle(vertices, vBuffer, gl, vPosition, vcBuffer, vColor, vcolors);
 
   index += 1;
 };

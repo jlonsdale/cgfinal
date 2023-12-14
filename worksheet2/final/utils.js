@@ -9,7 +9,6 @@ const getSquareCoordinates = (centerX, centerY, size) => {
 
 const createCircle = (centerX, centerY, radius) => {
   const vertices = [];
-
   for (let i = 0; i < 100; i++) {
     const angle = (i / 100) * Math.PI * 2;
     const x = centerX + Math.cos(angle) * radius;
@@ -20,12 +19,9 @@ const createCircle = (centerX, centerY, radius) => {
   return vertices;
 };
 
-function distanceBetweenVec2(vec1, vec2) {
+const distanceBetweenVec2 = (vec1, vec2) => {
   const dx = vec2[0] - vec1[0];
   const dy = vec2[1] - vec1[1];
-
-  // Use the Pythagorean theorem to calculate the distance
   const distance = Math.sqrt(dx * dx + dy * dy);
-
   return distance;
-}
+};
