@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      button {
+        padding: 10px 10px;
+        background-color: #ff007f;
+        color: #fff;
+        border: none;
+        margin: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      #frame {
+        width: 100vw;
+        height: 100vh;
+        border: none;
+        padding: 10px;
+      }
+
+      .container {
+        display: flex;
+        padding: auto;
+        margin: auto;
+      }
+      label {
+        font-weight: bold;
+        color: #333;
+      }
+      select {
+        width: 100%;
+        padding: 5px;
+        margin: 5px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      h1 {
+        outline: none;
+        color: #ff007f;
+      }
+    </style>
+    <script type="text/javascript" src="../../common/webgl-utils.js"></script>
+    <script type="text/javascript" src="../../common/initShaders.js"></script>
+    <script type="text/javascript" src="../../common/MV.js"></script>
+
+    <script id="vertex-shader" type="x-shader/x-vertex">
+      attribute vec4 a_Position;
+      uniform mat4 u_ModelViewMatrix;
+      uniform mat4 u_ProjectionMatrix;
+
+      attribute vec4 a_Color;
+      varying vec4 v_Color;
+      void main() {
+        v_Color = a_Color;
+        gl_Position = u_ProjectionMatrix * u_ModelViewMatrix * a_Position;
+        gl_PointSize = 20.0;
+      }
+    </script>
+
+    <script id="fragment-shader" type="x-shader/x-fragment">
+      precision mediump float;
+      uniform vec4 u_Color;
+      // Uniform variable for color
+      void main() {
+        gl_FragColor = u_Color;
+      }
+    </script>
+
+    <script type="text/javascript" src="script.js"></script>
+    <script type="text/javascript" src="constants.js"></script>
+    <title>Worksheet 3 Computer Graphics</title>
+  </head>
+
+  <body style="font-family: 'Arial', sans-serif">
+    <h1>1 Point Perspective</h1>
+    <div style="text-align: center; margin: auto">
+      <div class="container">
+        <canvas id="c" height="712" width="712"> ruh roh </canvas>
+      </div>
+    </div>
+  </body>
+</html>
