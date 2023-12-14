@@ -31,7 +31,7 @@ const ytop = 50.0;
 const bottom = -50.0;
 
 const main = async () => {
-  let response = await fetch("../Cat.obj");
+  let response = await fetch("../../common/Cat.obj");
   let objtext = await response.text();
   let objects = await readObj(objtext);
 
