@@ -1,102 +1,208 @@
-const main = async () => {
-  // Set up the configuration
-  const canvas = document.getElementById("c");
-  const gl = WebGLUtils.setupWebGL(canvas);
+let canvas;
+let gl;
+let numTimesToSubdivide;
+let pointsArray = [];
+let normalsArray = [];
 
-  const program = initShaders(gl, "vertex-shader", "fragment-shader");
-  var ext = gl.getExtension("OES_element_index_uint");
-  if (!ext) {
-    console.log("o oh");
+let index = 0;
+let phi = 0;
+let theta = 0;
+let dtheta = 0.04;
+let far = 10;
+let near = 0.01;
+
+let light = 0.5;
+let ks = 0.3;
+let ka = 0.3;
+let kd = 0.3;
+let s = 20.0;
+
+let V, P, N;
+let modelViewMatrixLoc, projectionMatrixLoc;
+
+let eye;
+let at = vec3(0.0, 0.0, 0.0);
+let up = vec3(0.0, 1.0, 0.0);
+let animationRequestId;
+
+function triangle(a, b, c) {
+  const vertices = [a, b, c];
+
+  vertices.forEach((v) => {
+    pointsArray.push([...v]);
+    normalsArray.push(v[0], v[1], v[2], 0.0);
+  });
+
+  index += 3;
+}
+
+function divideTriangle(a, b, c, count) {
+  if (count > 0) {
+    let ab = mix(a, b, 0.5);
+    let ac = mix(a, c, 0.5);
+    let bc = mix(b, c, 0.5);
+
+    ab = normalize(ab, true);
+    ac = normalize(ac, true);
+    bc = normalize(bc, true);
+
+    divideTriangle(a, ab, ac, count - 1);
+    divideTriangle(ab, b, bc, count - 1);
+    divideTriangle(bc, c, ac, count - 1);
+    divideTriangle(ab, bc, ac, count - 1);
+  } else {
+    triangle(a, b, c);
   }
+}
+
+function tetrahedron(a, b, c, d, n) {
+  divideTriangle(a, b, c, n);
+  divideTriangle(d, c, b, n);
+  divideTriangle(a, d, b, n);
+  divideTriangle(a, c, d, n);
+}
+
+window.onload = function main() {
+  if (!numTimesToSubdivide) {
+    numTimesToSubdivide = subdivides.max;
+  }
+
+  gl = initWebGL("c");
+  gl.clearColor(0.3921, 0.5843, 0.9294, 1.0);
+  gl.enable(gl.DEPTH_TEST);
+
+  let program = initShaders(gl, "vertex-shader", "fragment-shader");
   gl.useProgram(program);
 
-  gl.clearColor(0.3921, 0.5843, 0.9294, 1.0);
-  gl.clear(gl.COLOR_BUFFER_BIT);
+  tetrahedron(va, vb, vc, vd, numTimesToSubdivide);
 
-  var iBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iBuffer);
-  gl.bufferData(
-    gl.ELEMENT_ARRAY_BUFFER,
-    new Uint32Array(wire_indices),
-    gl.STATIC_DRAW
-  );
-
-  var vBuffer = gl.createBuffer();
+  let vBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW);
+  gl.bufferData(gl.ARRAY_BUFFER, flatten(pointsArray), gl.STATIC_DRAW);
 
-  var vPosition = gl.getAttribLocation(program, "a_Position");
-  gl.vertexAttribPointer(vPosition, 3, gl.FLOAT, false, 0, 0);
+  let vPosition = gl.getAttribLocation(program, "a_Position");
+  gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(vPosition);
 
-  // Clear the canvas
-  gl.clear(gl.COLOR_BUFFER_BIT);
+  let nBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, flatten(normalsArray), gl.STATIC_DRAW);
 
-  let far = 10;
-  let at = vec3(0.5, 0.5, 0.0);
-  let up = vec3(0.0, 1.0, 0.0);
-  let eye = vec3(0.5, 0.5, far);
+  let vNormal = gl.getAttribLocation(program, "a_Normal");
+  gl.vertexAttribPointer(vNormal, 4, gl.FLOAT, false, 0, 0);
+  gl.enableVertexAttribArray(vNormal);
 
-  let V = lookAt(eye, at, up);
-  let P = perspective(45, 1, 0, far);
+  gl.cullFace(gl.BACK);
 
-  console.log(V);
+  modelViewMatrixLoc = gl.getUniformLocation(program, "u_modelViewMatrix");
+  projectionMatrixLoc = gl.getUniformLocation(program, "u_projectionMatrix");
 
-  let translateMatrix = translate(-0.5, 0.5, 0);
+  document.getElementById("makeSphere").onclick = function () {
+    let { max, _ } = subdivides;
 
-  let uModelViewMatrix = gl.getUniformLocation(program, "u_ModelViewMatrix");
-  let uProjectionMatrix = gl.getUniformLocation(program, "u_ProjectionMatrix");
-  let uTranslateMatrix = gl.getUniformLocation(program, "u_TranslateMatrix");
+    if (numTimesToSubdivide < max) {
+      numTimesToSubdivide++;
+      pointsArray = [];
+      normalsArray = [];
+    }
+    index = 0;
+    theta = 0;
+    // Stop the current animation loop
+    cancelAnimationFrame(animationRequestId);
+    main();
+  };
+  document.getElementById("makeSquare").onclick = function () {
+    let { _, min } = subdivides;
 
-  gl.uniformMatrix4fv(uModelViewMatrix, false, flatten(V));
-  gl.uniformMatrix4fv(uProjectionMatrix, false, flatten(P));
-  gl.uniformMatrix4fv(uTranslateMatrix, false, flatten(translateMatrix));
+    if (numTimesToSubdivide > min) {
+      numTimesToSubdivide--;
+      pointsArray = [];
+      normalsArray = [];
+    }
+    index = 0;
+    theta = 0;
+    // Stop the current animation loop
+    cancelAnimationFrame(animationRequestId);
+    main();
+  };
 
-  gl.drawElements(gl.LINES, wire_indices.length, gl.UNSIGNED_INT, 0);
+  document.getElementById("ka").addEventListener("input", (e) => {
+    const sliderValue = e.target.value;
+    ka = sliderValue;
+    cancelAnimationFrame(animationRequestId);
+    gl.uniform1f(gl.getUniformLocation(program, "ka"), ka);
+    renderScene();
+  });
+  document.getElementById("ks").addEventListener("input", (e) => {
+    const sliderValue = e.target.value;
+    ks = sliderValue;
+    gl.uniform1f(gl.getUniformLocation(program, "ks"), ks);
 
-  eye = vec3(0.0, 0.0, 1.0);
+    cancelAnimationFrame(animationRequestId);
+    renderScene();
+  });
+  document.getElementById("kd").addEventListener("input", (e) => {
+    const sliderValue = e.target.value;
+    kd = sliderValue;
+    gl.uniform1f(gl.getUniformLocation(program, "kd"), kd);
 
-  let theta = -0.785398; //45 in rads
-  let phi = 0;
+    cancelAnimationFrame(animationRequestId);
+    renderScene();
+  });
+  document.getElementById("s").addEventListener("input", (e) => {
+    const sliderValue = e.target.value;
+    s = sliderValue;
+    gl.uniform1f(gl.getUniformLocation(program, "s"), s);
 
-  eye = vec3(
-    far * Math.sin(theta) * Math.cos(phi),
-    far * Math.sin(theta) * Math.sin(phi),
-    far * Math.cos(theta)
-  );
+    cancelAnimationFrame(animationRequestId);
+    renderScene();
+  });
+  document.getElementById("lightSlider").addEventListener("input", (e) => {
+    const sliderValue = e.target.value;
+    light = sliderValue;
+    cancelAnimationFrame(animationRequestId);
+    gl.uniform1f(gl.getUniformLocation(program, "light"), light);
+    renderScene();
+  });
 
-  V = lookAt(eye, at, up);
+  document.getElementById("stop").onclick = function () {
+    if (dtheta == 0) {
+      dtheta = 0.1;
+    } else {
+      dtheta = 0.0;
+    }
+    cancelAnimationFrame(animationRequestId);
+    renderScene();
+  };
 
-  console.log(V);
+  console.log(ka, ks, kd, s);
 
-  translateMatrix = translate(0, 0, 0);
+  gl.uniform1f(gl.getUniformLocation(program, "ka"), ka);
+  gl.uniform1f(gl.getUniformLocation(program, "kd"), kd);
+  gl.uniform1f(gl.getUniformLocation(program, "ks"), ks);
+  gl.uniform1f(gl.getUniformLocation(program, "s"), s);
+  gl.uniform1f(gl.getUniformLocation(program, "light"), light);
 
-  gl.uniformMatrix4fv(uModelViewMatrix, false, flatten(V));
-  gl.uniformMatrix4fv(uTranslateMatrix, false, flatten(translateMatrix));
-
-  gl.drawElements(gl.LINES, wire_indices.length, gl.UNSIGNED_INT, 0);
-
-  theta = -0.785398; //45 in rads
-  phi = -0.785398;
-
-  eye = vec3(
-    far * Math.sin(theta) * Math.cos(phi),
-    far * Math.sin(theta) * Math.sin(phi),
-    far * Math.cos(theta)
-  );
-
-  V = lookAt(eye, at, up);
-
-  console.log(V);
-
-  translateMatrix = translate(0.5, -0.5, 0);
-
-  gl.uniformMatrix4fv(uModelViewMatrix, false, flatten(V));
-  gl.uniformMatrix4fv(uTranslateMatrix, false, flatten(translateMatrix));
-
-  gl.drawElements(gl.LINES, wire_indices.length, gl.UNSIGNED_INT, 0);
+  renderScene();
 };
 
-window.onload = function init() {
-  main();
+const renderScene = () => {
+  theta += dtheta;
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+  eye = vec3(
+    (near + 5) * Math.sin(theta) * Math.cos(phi),
+    (near + 5) * Math.sin(theta) * Math.sin(phi),
+    (near + 5) * Math.cos(theta)
+  );
+
+  V = lookAt(eye, at, up);
+  P = perspective(45, 1, near, far);
+  gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(V));
+  gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(P));
+
+  for (let i = 0; i < index; i += 3) {
+    gl.drawArrays(gl.TRIANGLES, i, 3);
+  }
+  animationRequestId = requestAnimationFrame(renderScene);
 };
