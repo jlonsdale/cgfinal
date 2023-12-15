@@ -106,13 +106,14 @@ window.onload = function init() {
 async function initTexture(gl) {
   let g_tex_ready = 1;
   const cubemap = [
-    "../assets/cm_left.png", // POSITIVE_X
-    "../assets/cm_right.png", // NEGATIVE_X
-    "../assets/cm_top.png", // POSITIVE_Y
-    "../assets/cm_bottom.png", // NEGATIVE_Y
-    "../assets/cm_back.png", // POSITIVE_Z
-    "../assets/cm_front.png", // NEGATIVE_Z
+    "../../common/assets/cm_left.png", // POSITIVE_X
+    "../../common/assets/cm_right.png", // NEGATIVE_X
+    "../../common/assets/cm_top.png", // POSITIVE_Y
+    "../../common/assets/cm_bottom.png", // NEGATIVE_Y
+    "../../common/assets/cm_back.png", // POSITIVE_Z
+    "../../common/assets/cm_front.png", // NEGATIVE_Z
   ];
+
   gl.activeTexture(gl.TEXTURE0);
   const texture = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);

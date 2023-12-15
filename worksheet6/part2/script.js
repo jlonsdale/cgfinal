@@ -168,5 +168,5 @@ var render = function (gl) {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl[selectedWrapMode]);
 
   gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
-  gl.drawArrays(gl.TRIANGLES, 0, points.length);
+  gl.drawArrays(gl.TRIANGLES, 0, pointsArray.length);
 };

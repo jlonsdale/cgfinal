@@ -106,17 +106,15 @@
     <div class="container">
       <canvas id="c" height="512" width="512"> ruh roh </canvas>
       <div class="textbox">
-        <h2>Part 2</h2>
+        <h2>Notes</h2>
         <p>
-          • Use clip coordinates for the quad, where one corner is (-1, -1, 0.999, 1), and the opposite corner is (1, 1, 0.999, 1).
-          Draw the quad with the same shaders as before.
-          Introduce a uniform matrix (Mtex) in the vertex shader to transform vertex positions to texture coordinates.
+          Introduce a uniform matrix (Mtex).
           <br/>
           <br/>
           • For the sphere, Set Mtex as an identity matrix.
           <br/>
           <br/>
-          For the quad, create Mtex for the quad using: The inverse of the projection matrix to go from clip coordinates to camera coordinates, and the inverse of the rotational part of the view matrix (no translation) to obtain direction vectors in world coordinates.
+          • For the quad, create Mtex for the quad using: The inverse of the projection matrix to go from clip coordinates to camera coordinates, and the inverse of the rotational part of the view matrix (no translation) to obtain direction vectors in world coordinates.
         </p>
       </div>
   </body>

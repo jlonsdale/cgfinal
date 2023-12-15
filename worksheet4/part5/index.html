@@ -1,59 +1,6 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script type="text/javascript" src="../../common/webgl-utils.js"></script>
-    <script type="text/javascript" src="../../common/initShaders.js"></script>
-    <script type="text/javascript" src="../../common/MV.js"></script>
-
-    <script id="vertex-shader" type="x-shader/x-vertex">
-      attribute vec4 a_Position;
-      attribute vec4 a_Normal;
-
-      uniform mat4 u_modelViewMatrix;
-      uniform mat4 u_projectionMatrix;
-
-      uniform float s;
-      uniform float light;
-      uniform float ka;
-      uniform float kd;
-      uniform float ks;
-
-      varying vec4 v_Color;
-
-      void main() {
-        vec3 L = -normalize(vec3(0.0,0.0,-1.0));
-        vec4 a_Color = (a_Position*0.5 + 0.5);
-
-        vec3 pos = (u_modelViewMatrix * a_Position).xyz;
-        vec3 N = normalize(a_Normal).xyz;
-
-        vec3 E = -normalize(pos);
-        vec3 H = normalize(E+L);
-
-        vec4 lightvec = vec4(light,light,light,light);
-
-        float diffuse = max(dot(N,L), 0.0);
-        float specular = pow(max(dot(N, H), 0.0), s);
-
-        v_Color = ka*a_Color + (kd*diffuse*lightvec) + (ks*specular*lightvec);
-        v_Color.a = 1.0;
-
-        gl_Position = u_projectionMatrix * u_modelViewMatrix * a_Position;
-
-      }
-    </script>
-
-    <script id="fragment-shader" type="x-shader/x-fragment">
-      precision mediump float;
-      varying vec4 v_Color;
-      void main() {
-        gl_FragColor = v_Color;
-      }
-    </script>
-
-    <script type="text/javascript" src="script.js"></script>
-    <script type="text/javascript" src="constants.js"></script>
-
     <style>
       .shape-button {
         margin: 4px;
@@ -108,86 +55,56 @@
 
   <body style="font-family: 'Arial', sans-serif">
     <div class="container">
-      <canvas id="c" height="512" width="512"> ruh roh </canvas>
       <div class="textbox">
         <h2>Notes</h2>
 
-        <div style="max-height: 500px; overflow: auto; text-align: center">
-          <div style="margin: 10px;">I wanted to create separate sliders for each parameter to see their individual effects on the image.<div>
-<br/>
-          <div>
-            <button id="stop" class="shape-button">Stop/Start</button>
-            <button id="makeSquare" class="shape-button">
-              Reduce Subdivisions
-            </button>
-            <button id="makeSphere" class="shape-button">
-              Increase Subdivisions
-            </button>
-          </div>
-          <div class="slider-container">
-            <label for="lightSlider" class="slider-label"
-              >Light Intensity:</label
-            >
-            <input
-              type="range"
-              id="lightSlider"
-              min="0.1"
-              max="1.0"
-              step="0.1"
-              value="0.5"
-            />
-          </div>
-          <div class="slider-container">
-            <label for="ka" class="slider-label"
-              >Ambient Reflectance (Ka):</label
-            >
-            <input
-              type="range"
-              id="ka"
-              min="0.1"
-              max="1.0"
-              step="0.1"
-              value="0.3"
-            />
-          </div>
-          <div class="slider-container">
-            <label for="kd" class="slider-label"
-              >Diffuse Reflectance (Kd):</label
-            >
-            <input
-              type="range"
-              id="kd"
-              min="0.1"
-              max="1.0"
-              step="0.1"
-              value="0.3"
-            />
-          </div>
-          <div class="slider-container">
-            <label for="ks" class="slider-label"
-              >Specular Reflectance (Ks):</label
-            >
-            <input
-              type="range"
-              id="ks"
-              min="0.1"
-              max="1.0"
-              step="0.1"
-              value="0.3"
-            />
-          </div>
-          <div class="slider-container">
-            <label for="s" class="slider-label">Shininess (s):</label>
-            <input
-              type="range"
-              id="s"
-              min="1"
-              max="100.0"
-              step="1.0"
-              value="20"
-            />
-          </div>
-        </div>
+        a) What is the difference between Phong shading and Phong lighting (the
+        Phong reflection model)?
+        <br />
+        Phong lighting includes the specular highlight.
+        <br /><br />
+        b) What is the difference between flat shading, Gouraud shading, and
+        Phong shading? List pros and cons of each. Is Gouraud or Phong shading
+        the best method for simulating highlights? Explain.
+        <br />
+        Flat Shading is simple and computationally inexpensive. Well-suited for
+        low-powered or real-time applications. Works reasonably well for flat or
+        low-poly objects. However it doesn't capture smooth lighting transitions
+        within a polygon, and is bad for rounded objects.
+        <br />
+        Gouraud Shading gives us smoother shading than flat shading yet is less
+        computationally intensive as Phong shading. Works well for matte
+        objects. However, it doesn't compute the specular highlight.
+        <br />
+        Phong Shading provides the most accurate example of lighting and glossy
+        highlights.However is computationally most expensive and more complex to
+        impliment than the previous two shading models.
+        <br />
+        <br />
+        c) What is the difference between a directional light and a point light?
+        <br />
+        A directional light emits light in a constant direction, like sunlight,
+        with no distance attenuation and a point light radiates light uniformly
+        in all directions from a specific point in space and exhibits distance
+        attenuation.
+        <br /><br />
+        d) Does the eye position influence the shading of an object in any way?
+        <br />
+        Yes, when considering the specular highlight.
+        <br /><br />
+        e) What is the effect of setting the specular term to (0, 0, 0)?
+        <br />
+        It becomes like Gouraud Shading.
+        <br />
+        <br />
+        f) What is the effect of increasing the shininess exponent (𝛼𝛼)?
+        <br />
+        The highlight becomes smaller but more intense.
+        <br />
+        <br />
+        g) In what coordinate space did you compute the lighting?
+        <br />
+        Eye space.
       </div>
     </div>
   </body>

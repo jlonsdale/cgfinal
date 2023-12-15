@@ -7,8 +7,6 @@
     <script type="text/javascript" src="script.js"></script>
     <script type="text/javascript" src="utils.js"></script>
 
-
-
     <script id="vertex-shader" type="x-shader/x-vertex">
       attribute vec4 a_position;
       attribute vec4 a_normal;
@@ -37,106 +35,90 @@
         reflected = reflect(u_eyePos-position, normal);
 
         v_texturecords = (u_mtex * a_position).xyz;
-        gl_Position = u_projectionMatrix*u_modelViewMatrix*a_position;   
-      
+        gl_Position = u_projectionMatrix*u_modelViewMatrix*a_position;
+
       }
-      </script>
+    </script>
 
-      <script id="fragment-shader" type="x-shader/x-fragment">
-        precision mediump float;
-        varying vec3 v_texturecords;
+    <script id="fragment-shader" type="x-shader/x-fragment">
+      precision mediump float;
+      varying vec3 v_texturecords;
 
-        uniform bool u_isReflective;
-        varying vec3 normal;
-        varying vec3 reflected;
-        varying vec3 position;
-        uniform samplerCube texture;
-        
-        void
-        main()
-        {
-          if(u_isReflective) {
-            gl_FragColor = textureCube(texture, reflected);
-          }
-          else {
-            gl_FragColor = textureCube(texture, v_texturecords);
-          }
+      uniform bool u_isReflective;
+      varying vec3 normal;
+      varying vec3 reflected;
+      varying vec3 position;
+      uniform samplerCube texture;
+
+      void
+      main()
+      {
+        if(u_isReflective) {
+          gl_FragColor = textureCube(texture, reflected);
         }
-        </script>
+        else {
+          gl_FragColor = textureCube(texture, v_texturecords);
+        }
+      }
+    </script>
     <style>
-    .container {
-      display: flex;
-      margin: auto;
-    }
-    .textbox {
-      background-color: #ffd6e8; /* Light pink background */
-      border: 2px solid pink;
-      padding: 10px;
-      margin-left: 20px;
-      width: 450px;
-    }
-    h2 {
-      padding: 2px;
-      margin: 0px;
-      font-size: 24px;
-      color: #ff007f; /* Pink text color */
-    }
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 0;
-      padding-top: 20px;
-    }
+      .container {
+        display: flex;
+        margin: auto;
+      }
+      .textbox {
+        background-color: #ffd6e8; /* Light pink background */
+        border: 2px solid pink;
+        padding: 10px;
+        margin-left: 20px;
+        width: 450px;
+      }
+      h2 {
+        padding: 2px;
+        margin: 0px;
+        font-size: 24px;
+        color: #ff007f; /* Pink text color */
+      }
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        padding-top: 20px;
+      }
 
-    label {
-      font-weight: bold;
-      color: #333;
-    }
+      label {
+        font-weight: bold;
+        color: #333;
+      }
 
-    select {
-      width: 100%;
-      padding: 5px;
-      margin: 5px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
+      select {
+        width: 100%;
+        padding: 5px;
+        margin: 5px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
 
-    select:focus {
-      outline: none;
-      border-color: #ff6b6b;
-    }
+      select:focus {
+        outline: none;
+        border-color: #ff6b6b;
+      }
 
-  ul {
-    padding-left: 20px; /* Adjust the value to your desired spacing */
-  }
+      ul {
+        padding-left: 20px; /* Adjust the value to your desired spacing */
+      }
 
-  li {
-    margin-bottom: 10px; /* Adjust the value to your desired spacing */
-    list-style-type: disc;
-  }
-      
+      li {
+        margin-bottom: 10px; /* Adjust the value to your desired spacing */
+        list-style-type: disc;
+      }
     </style>
   </head>
 
   <body style="font-family: 'Arial', sans-serif">
     <div class="container">
       <canvas id="c" height="512" width="512"> ruh roh </canvas>
-      <div class="textbox">
-        <h2>Part 3</h2>
-        <p>
-          • Create a uniform variable (reflective) to distinguish reflective 
-          objects (the mirror ball) from other objects (the background quad).
-          <br/>
-          <br/>
-          • Upload the eye position to the fragment shader as a uniform variable 
-          and compute the direction of incidence in world 
-          space coordinates.
-          <br/>
-          <br/>
-          • Use a conditional operator (or an if-statement) to choose the 
-          direction of reflection as texture coordinates for reflective objects.
-        </p>
-      </div>
+    </div>
   </body>
 </html>

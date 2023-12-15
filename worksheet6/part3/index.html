@@ -106,18 +106,12 @@
     <div class="container">
       <canvas id="c" height="512" width="512"> ruh roh </canvas>
       <div class="textbox">
-        <h2>Part 3 - Globe</h2>
+        <h2>Notes</h2>
         <p>
-          • The next step is to pass the normal of the sphere to the fragment shader and use it to calculate the texture coordinates. Here, the normals are the same as the positions of points on the unit sphere.
-          <br/><br/>
-          • To calculate texture coordinates from the surface normal, invert the relationship you found using inverse trigonometric functions. This resulting formula should be used in the fragment shader.
-          <br/><br/>
-          • Illuminate the sphere using both a directional light source and an ambient light source.
-          <br/><br/>
-          • To enhance the appearance during the globe's rotation, consider the high-resolution earth texture, which may lead to minification issues, particularly in mountain ranges. Choose a filtering option that mitigates these minification problems. I have selected <b>LINEAR_MIPMAP_LINEAR</b>.
+          To enhance the appearance during the globe's rotation, consider the high-resolution earth texture, which may lead to minification issues, particularly in mountain ranges. Choose a filtering option that mitigates these minification problems. I have selected <b>LINEAR_MIPMAP_LINEAR</b>.
         </p>
         
       </div>
-      <img id="texImage" src="../earth.jpg" hidden="">
+      <img id="texImage" src="../../common/earth.jpg" hidden="">
   </body>
 </html>
